@@ -10,6 +10,7 @@ async function main() {
   try {
     deleteFolderRecursive('./output');
     createFolderIfNotExists('./output');
+    createFolderIfNotExists('./output/bundle');
     createFolderIfNotExists('./input');
     createFolderIfNotExists('./input/csv');
     await foreachXlsx();

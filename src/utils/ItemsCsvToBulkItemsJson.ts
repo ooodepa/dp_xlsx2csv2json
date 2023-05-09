@@ -21,7 +21,7 @@ export default async function ItemsCsvToBulkItemsJson(
   array = array.filter(e => e.length > 0);
 
   let headers = array[0].split(',');
-  headers = headers.map(e => e.trim());
+  headers = headers.map(e => `${JSON.parse(e)}`.trim());
 
   const dataArray: ItemDto[] = [];
 
@@ -32,22 +32,17 @@ export default async function ItemsCsvToBulkItemsJson(
 
     const arr = element.split(',');
 
-    const dp_name = arr[headers.indexOf('Наименование')]
-      ?.replace(/^"(.*)"$/, '$1')
-      .replace(/""/g, '"');
-
-    const dp_model = arr[headers.indexOf('Модель')];
-    const dp_cost = Number(arr[headers.indexOf('Цена')]);
-    const dp_photoUrl = arr[headers.indexOf('Картинка')];
-    const dp_itemCategoryId = Number(arr[headers.indexOf('Код категории')])
-      ? Number(arr[headers.indexOf('Код категории')])
-      : undefined;
-    const dp_seoKeywords = arr[headers.indexOf('Ключевые слова')];
-    const dp_seoDescription = arr[headers.indexOf('Описание')];
+    const dp_name = getCsvCell(arr[headers.indexOf('Наименование')]);
+    const dp_model = getCsvCell(arr[headers.indexOf('Модель')]);
+    const dp_cost = getCsvCell(arr[headers.indexOf('Цена')]);
+    const dp_photoUrl = getCsvCell(arr[headers.indexOf('Картинка')]);
+    const dp_itemCategoryId = getCsvCell(arr[headers.indexOf('Код категории')]);
+    const dp_seoKeywords = getCsvCell(arr[headers.indexOf('Ключевые слова')]);
+    const dp_seoDescription = getCsvCell(arr[headers.indexOf('Описание')]);
 
     const dp_itemCharacteristics: LstItemCharacteristics[] = [];
 
-    const onBox = arr[headers.indexOf('В коробке (штук)')];
+    const onBox = getCsvCell(arr[headers.indexOf('В коробке (штук)')]);
 
     if (onBox) {
       dp_itemCharacteristics.push({
@@ -56,7 +51,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const boxWeight = arr[headers.indexOf('Вес коробки (кг)')];
+    const boxWeight = getCsvCell(arr[headers.indexOf('Вес коробки (кг)')]);
 
     if (boxWeight) {
       dp_itemCharacteristics.push({
@@ -65,7 +60,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const boxM3 = arr[headers.indexOf('Размер коробки (м3)')];
+    const boxM3 = getCsvCell(arr[headers.indexOf('Размер коробки (м3)')]);
 
     if (boxM3) {
       dp_itemCharacteristics.push({
@@ -74,7 +69,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const diametrMm = arr[headers.indexOf('Диаметр (mm)')];
+    const diametrMm = getCsvCell(arr[headers.indexOf('Диаметр (mm)')]);
 
     if (diametrMm) {
       dp_itemCharacteristics.push({
@@ -83,7 +78,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const heightIslivaCm = arr[headers.indexOf('Высота (mm)')];
+    const heightIslivaCm = getCsvCell(arr[headers.indexOf('Высота (mm)')]);
 
     if (heightIslivaCm) {
       dp_itemCharacteristics.push({
@@ -92,7 +87,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const lengthIslivaCm = arr[headers.indexOf('Длина (mm)')];
+    const lengthIslivaCm = getCsvCell(arr[headers.indexOf('Длина (mm)')]);
 
     if (lengthIslivaCm) {
       dp_itemCharacteristics.push({
@@ -101,7 +96,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const material = arr[headers.indexOf('Материал')];
+    const material = getCsvCell(arr[headers.indexOf('Материал')]);
 
     if (material) {
       dp_itemCharacteristics.push({
@@ -110,7 +105,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const color = arr[headers.indexOf('Цвет')];
+    const color = getCsvCell(arr[headers.indexOf('Цвет')]);
 
     if (color) {
       dp_itemCharacteristics.push({
@@ -119,7 +114,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const upravlenie = arr[headers.indexOf('Управление')];
+    const upravlenie = getCsvCell(arr[headers.indexOf('Управление')]);
 
     if (upravlenie) {
       dp_itemCharacteristics.push({
@@ -128,7 +123,9 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const onCartonBox = arr[headers.indexOf('В картонной коробке (штук)')];
+    const onCartonBox = getCsvCell(
+      arr[headers.indexOf('В картонной коробке (штук)')],
+    );
 
     if (onCartonBox) {
       dp_itemCharacteristics.push({
@@ -138,7 +135,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const ip = arr[headers.indexOf('IP')];
+    const ip = getCsvCell(arr[headers.indexOf('IP')]);
 
     if (ip) {
       dp_itemCharacteristics.push({
@@ -147,7 +144,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const volt = arr[headers.indexOf('Вольт (В)')];
+    const volt = getCsvCell(arr[headers.indexOf('Вольт (В)')]);
 
     if (volt) {
       dp_itemCharacteristics.push({
@@ -156,7 +153,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const herz = arr[headers.indexOf('Частота (Гц)')];
+    const herz = getCsvCell(arr[headers.indexOf('Частота (Гц)')]);
 
     if (volt) {
       dp_itemCharacteristics.push({
@@ -165,7 +162,7 @@ export default async function ItemsCsvToBulkItemsJson(
       });
     }
 
-    const galery = arr[headers.indexOf('Галерея')]?.split(' ');
+    const galery = getCsvCell(arr[headers.indexOf('Галерея')]).split(' ');
     const dp_itemGalery: LstItemGalery[] = [];
 
     if (galery) {
@@ -179,9 +176,11 @@ export default async function ItemsCsvToBulkItemsJson(
     const data: ItemDto = {
       dp_name: dp_name ? dp_name : '',
       dp_model: dp_model ? dp_model : '',
-      dp_cost: dp_cost ? dp_cost : 0,
+      dp_cost: Number(dp_cost) ? Number(dp_cost) : 0,
       dp_photoUrl: dp_photoUrl ? dp_photoUrl : '',
-      dp_itemCategoryId: dp_itemCategoryId,
+      dp_itemCategoryId: Number(dp_itemCategoryId)
+        ? Number(dp_itemCategoryId)
+        : 0,
       dp_seoKeywords: dp_seoKeywords ? dp_seoKeywords : '',
       dp_seoDescription: dp_seoDescription ? dp_seoDescription : '',
       dp_itemCharacteristics: dp_itemCharacteristics,
@@ -198,4 +197,9 @@ export default async function ItemsCsvToBulkItemsJson(
   const textJson = JSON.stringify(obj, null, 2);
 
   await writeFile(`./output/${path}.json`, textJson, { log: true });
+}
+
+function getCsvCell(cell: string | undefined): string {
+  if (!cell) return '';
+  return cell.replace(/^"(.*)"$/, '$1');
 }

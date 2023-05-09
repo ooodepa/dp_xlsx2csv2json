@@ -1,6 +1,7 @@
 import ls from './ls';
 import readFile from './readFile';
 import ItemDto from '../dto/item';
+import writeFile from './writeFile';
 
 interface ItemBulk {
   bulk: ItemDto[];
@@ -33,7 +34,10 @@ export default async function FindDublicates() {
       }
     }
   }
-  console.log(`                       Итого: ${countDuplicName} шт.`);
+
+  if (countDuplicName === 0) {
+    console.log('\t Нет дубликатов');
+  }
 
   console.log(' \n Дубликаты модели: ');
   let countDuplicModels = 0;
@@ -49,7 +53,10 @@ export default async function FindDublicates() {
       }
     }
   }
-  console.log(`                       Итого: ${countDuplicModels} шт.`);
+
+  if (countDuplicModels === 0) {
+    console.log('\t Нет дубликатов');
+  }
 
   console.log(' \n Дубликаты описания: ');
   let countDuplicDescription = 0;
@@ -65,7 +72,60 @@ export default async function FindDublicates() {
       }
     }
   }
-  console.log(`                       Итого: ${countDuplicDescription} шт.`);
 
-  console.log(`\n Количество всех номенклатур: ${array.length} шт.`);
+  if (countDuplicDescription === 0) {
+    console.log('\t Нет дубликатов');
+  }
+
+  let countEmptyName = 0;
+  array.forEach(e => {
+    if (e.dp_name.length === 0) {
+      countEmptyName += 1;
+    }
+  });
+
+  let countEmptyModel = 0;
+  array.forEach(e => {
+    if (e.dp_model.length === 0) {
+      countEmptyModel += 1;
+    }
+  });
+
+  let countEmptyDescription = 0;
+  array.forEach(e => {
+    if (e.dp_seoDescription.length === 0) {
+      countEmptyDescription += 1;
+    }
+  });
+
+  console.log('\n Записи с неуказанной категорией:');
+  let countNoCategory = 0;
+  array.forEach(e => {
+    if (e.dp_itemCategoryId === 0) {
+      countNoCategory += 1;
+      console.log(` - ${e.dp_model} ${e.dp_name}`);
+    }
+  });
+
+  if (countNoCategory === 0) {
+    console.log('\t У всех записей указаны категории');
+  }
+
+  console.log(`
+ Количество дубликатов наименования            : ${countDuplicName} шт.
+ Количество дубликатов модели                  : ${countDuplicModels} шт.
+ Количество дубликатов описания                : ${countDuplicDescription} шт.
+                                               :
+ Количество записей с неуказаным наименованием : ${countEmptyName} шт.
+ Количество записей с неуказаной модели        : ${countEmptyModel} шт.
+ Количество записей с неуказаным описанием     : ${countEmptyDescription} шт.
+                                               :
+ Количество записей с неуказаной категорией    : ${countNoCategory} шт.
+                                               :
+ Количество всех номенклатур                   : ${array.length} шт.
+  `);
+
+  const path = './output/bundle/DP_CTL_Items.json';
+  const data = JSON.stringify({ bulk: array }, null, 2);
+  await writeFile(path, data, { log: true });
 }
