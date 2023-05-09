@@ -125,7 +125,9 @@ export default async function FindDublicates() {
  Количество всех номенклатур                   : ${array.length} шт.
   `);
 
+  const sortedArray = array.sort((a, b) => a.dp_model.localeCompare(b.dp_model));
+
   const path = './output/bundle/DP_CTL_Items.json';
-  const data = JSON.stringify({ bulk: array }, null, 2);
+  const data = JSON.stringify({ bulk: sortedArray }, null, 2);
   await writeFile(path, data, { log: true });
 }
